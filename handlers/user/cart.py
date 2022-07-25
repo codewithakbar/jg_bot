@@ -6,14 +6,14 @@ from keyboards.inline.products_from_cart import product_markup, product_cb
 from keyboards.inline.products_from_catalog import back_to_menu
 from aiogram.utils.callback_data import CallbackData
 from aiogram.types.chat import ChatActions
-from data.config import ADMINS
+from data.config import ADMINS, CHANNELS
 from keyboards.default.markups import *
 from states import CheckoutState
 from loader import dp, db, bot
 from filters import IsUser
 from aiogram import types
 from .menu import cart
-
+from keyboards.inline.confirm import confirmation_keyboard
 
 
 @dp.message_handler(IsUser(), text=cart)
@@ -52,8 +52,7 @@ async def process_cart(message: Message, state: FSMContext):
 
                 markup = product_markup(idx, count_in_cart)
                 text = f'<b>{title}</b>\n\n{body}\n\nЦена: {price}₽.'
-                
-                
+
                 await message.answer_photo(photo=image,
                                            caption=text,
                                            reply_markup=markup)
@@ -123,7 +122,10 @@ async def process_checkout(message: Message, state: FSMContext):
 
 
 check_admin = ""
+
+
 async def checkout(message, state):
+    global check_admin
     answer = ''
     total_price = 0
 
@@ -137,7 +139,7 @@ async def checkout(message, state):
 
     await message.answer(f'{answer}\nБуюртманинг умумий суммаси: {total_price}so\'m.',
                          reply_markup=check_markup())
-    check_admin.add(f'{answer}\nБуюртманинг умумий суммаси: {total_price}so\'m.')
+    check_admin += f'{answer}\nБуюртманинг умумий суммаси: {total_price}so\'m.'
 
 
 @dp.message_handler(IsUser(), lambda message: message.text not in [all_right_message, back_message], state=CheckoutState.check_cart)
@@ -283,29 +285,39 @@ async def process_confirm(message: Message, state: FSMContext):
 
             db.query('DELETE FROM cart WHERE cid=?', (cid,))
 
-            msg = f'🚀\nИсм: <b>' + data['name'] + '</b>\nМанзил: <b>' + data['location'] + '</b>'
+            # msg = f'🚀\nИсм: <b>' + data['name'] + '</b>\nМанзил: <b>' + data['location'] + '</b>'
 
-            await message.answer(f'ОК! Сизнинг буюртмангиз қабул қилинди, яқин орада сиз билан админ бўгланади 🚀\nИсм: <b>' +
-                                 data['name'] +
-                                 '</b>\nМанзил: <b>' +
-                                 data['location'] + '</b>',
-                                 )
+            await message.answer(f'ОК! Сизнинг буюртмангиз қабул қилинди, яқин орада сиз билан админ бўгланади 🚀')
 
-            await message.answer(f'/start', reply_markup=markup)
-             
-                
-             
+            username = message.from_user.username
 
+            msg = f"❗️❗️❗️ <b>Sizning buyurmangiz: @{username}</b>\n\n"
+            msg += f"Ism: {data['name']}\n"
+            msg += f"Telefon raqam: {data['phone']}\n"
+            msg += f"Adres: {data['address']}\n"
+            msg += f"GEO-Manzil: {data['location']}\n"
 
+            await message.answer(f'{check_admin}\n {"-"*70}\n\n{msg}', reply_markup=markup)
 
+            for i in ADMINS:
+                await bot.send_message(i, f'{check_admin}\n {"-"*70}\n\n{msg}', reply_markup=confirmation_keyboard)
 
-            
-            
+            # @dp.message_handler(text="confirm")
+            @dp.callback_query_handler(text='confirm')
+            async def confirm_post(call: CallbackQuery):
+                message = await call.message.edit_reply_markup()
+                await message.send_copy(chat_id=CHANNELS[0])
+
+            # @dp.message_handler(text="cancel")
+
+            @dp.callback_query_handler(text='cancel')
+            async def cancel_post(call: CallbackQuery):
+                await call.message.delete()
+                await call.message.answer("Bekor qilindi")
+
             # await state.finish()
 
     else:
 
         await message.answer('Ҳисобингизда пул етарли эмас. Балансингизни толдиринг!',
                              reply_markup=markup)
-
-    await state.finish()
