@@ -121,9 +121,6 @@ async def process_checkout(message: Message, state: FSMContext):
     await checkout(message, state)
 
 
-check_admin = ""
-
-
 async def checkout(message, state):
     global check_admin
     answer = ''
@@ -139,7 +136,7 @@ async def checkout(message, state):
 
     await message.answer(f'{answer}\nБуюртманинг умумий суммаси: {total_price}so\'m.',
                          reply_markup=check_markup())
-    check_admin += f'{answer}\nБуюртманинг умумий суммаси: {total_price}so\'m.'
+    check_admin = f'{answer}\nБуюртманинг умумий суммаси: {total_price}so\'m.\n'
 
 
 @dp.message_handler(IsUser(), lambda message: message.text not in [all_right_message, back_message], state=CheckoutState.check_cart)

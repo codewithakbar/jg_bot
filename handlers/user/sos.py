@@ -55,5 +55,4 @@ from loader import dp, db
 
 @dp.message_handler(commands='sos')
 async def cmd_sos(message: Message):
-    await SosState.question.set()
     await message.answer(f'Admin: @syurpriz2002', reply_markup=ReplyKeyboardRemove())
