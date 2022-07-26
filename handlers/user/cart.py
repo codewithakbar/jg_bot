@@ -1,7 +1,6 @@
 import logging
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
-from telegram import ChatPhoto
 from keyboards.inline.products_from_cart import product_markup, product_cb
 from keyboards.inline.products_from_catalog import back_to_menu
 from aiogram.utils.callback_data import CallbackData
