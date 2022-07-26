@@ -299,18 +299,7 @@ async def process_confirm(message: Message, state: FSMContext):
             for i in ADMINS:
                 await bot.send_message(i, f'{check_admin}\n {"-"*70}\n\n{msg}', reply_markup=confirmation_keyboard)
 
-            # @dp.message_handler(text="confirm")
-            @dp.callback_query_handler(text='confirm')
-            async def confirm_post(call: CallbackQuery):
-                message = await call.message.edit_reply_markup()
-                await message.send_copy(chat_id=CHANNELS[0])
-
-            # @dp.message_handler(text="cancel")
-
-            @dp.callback_query_handler(text='cancel')
-            async def cancel_post(call: CallbackQuery):
-                await call.message.delete()
-                await call.message.answer("Bekor qilindi")
+        
 
             # await state.finish()
 
@@ -318,3 +307,20 @@ async def process_confirm(message: Message, state: FSMContext):
 
         await message.answer('Ҳисобингизда пул етарли эмас. Балансингизни толдиринг!',
                              reply_markup=markup)
+
+
+# @dp.message_handler(text="confirm")
+
+
+@dp.callback_query_handler(text='confirm_a', state=CheckoutState.confirm)
+async def confirm_post(call: CallbackQuery):
+    message = await call.message.edit_reply_markup()
+    await message.send_copy(chat_id=CHANNELS[0])
+
+# @dp.message_handler(text="cancel")
+
+
+@dp.callback_query_handler(text='cancel_a', state=CheckoutState.confirm)
+async def cancel_post(call: CallbackQuery):
+    await call.message.delete()
+    await call.message.answer("Bekor qilindi")
