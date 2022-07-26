@@ -14,8 +14,8 @@ from hashlib import md5
 category_cb = CallbackData('category', 'id', 'action')
 product_cb = CallbackData('product', 'id', 'action')
 
-add_product = '➕ Добавить товар'
-delete_category = '🗑️ Удалить категорию'
+add_product = '➕ Махсулот кошиш'
+delete_category = '🗑️ Категория Учириш'
 
 
 @dp.message_handler(IsAdmin(), text=settings)
@@ -29,9 +29,9 @@ async def process_settings(message: Message):
             title, callback_data=category_cb.new(id=idx, action='view')))
 
     markup.add(InlineKeyboardButton(
-        '+ Добавить категорию', callback_data='add_category'))
+        '+ Kategoriya qo\'shing', callback_data='add_category'))
 
-    await message.answer('Настройка категорий:', reply_markup=markup)
+    await message.answer(' Kategoriyalarni sozlash:', reply_markup=markup)
 
 
 @dp.callback_query_handler(IsAdmin(), category_cb.filter(action='view'))
@@ -44,7 +44,7 @@ async def category_callback_handler(query: CallbackQuery, callback_data: dict, s
                            (category_idx,))
 
     await query.message.delete()
-    await query.answer('Все добавленные товары в эту категорию.')
+    await query.answer('Ushbu toifaga qo\'shilgan barcha mahsulotlar.')
     await state.update_data(category_index=category_idx)
     await show_products(query.message, products, category_idx)
 
@@ -55,7 +55,7 @@ async def category_callback_handler(query: CallbackQuery, callback_data: dict, s
 @dp.callback_query_handler(IsAdmin(), text='add_category')
 async def add_category_callback_handler(query: CallbackQuery):
     await query.message.delete()
-    await query.message.answer('Название категории?')
+    await query.message.answer('Kategoriya nomi?')
     await CategoryState.title.set()
 
 
@@ -83,7 +83,7 @@ async def delete_category_handler(message: Message, state: FSMContext):
                 'DELETE FROM products WHERE tag IN (SELECT title FROM categories WHERE idx=?)', (idx,))
             db.query('DELETE FROM categories WHERE idx=?', (idx,))
 
-            await message.answer('Готово!', reply_markup=ReplyKeyboardRemove())
+            await message.answer('Tayyor!', reply_markup=ReplyKeyboardRemove())
             await process_settings(message)
 
 
@@ -98,13 +98,13 @@ async def process_add_product(message: Message):
     markup = ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(cancel_message)
 
-    await message.answer('Название?', reply_markup=markup)
+    await message.answer('Nomi?', reply_markup=markup)
 
 
 @dp.message_handler(IsAdmin(), text=cancel_message, state=ProductState.title)
 async def process_cancel(message: Message, state: FSMContext):
 
-    await message.answer('Ок, отменено!', reply_markup=ReplyKeyboardRemove())
+    await message.answer('OK, bekor qilindi!', reply_markup=ReplyKeyboardRemove())
     await state.finish()
 
     await process_settings(message)
@@ -122,7 +122,7 @@ async def process_title(message: Message, state: FSMContext):
         data['title'] = message.text
 
     await ProductState.next()
-    await message.answer('Описание?', reply_markup=back_markup())
+    await message.answer('Ta\'rif?', reply_markup=back_markup())
 
 
 @dp.message_handler(IsAdmin(), text=back_message, state=ProductState.body)
@@ -132,7 +132,7 @@ async def process_body_back(message: Message, state: FSMContext):
 
     async with state.proxy() as data:
 
-        await message.answer(f"Изменить название с <b>{data['title']}</b>?", reply_markup=back_markup())
+        await message.answer(f"<b>{data['title']} bilan nomini o'zgartirish</b>?", reply_markup=back_markup())
 
 
 @dp.message_handler(IsAdmin(), state=ProductState.body)
@@ -142,7 +142,7 @@ async def process_body(message: Message, state: FSMContext):
         data['body'] = message.text
 
     await ProductState.next()
-    await message.answer('Фото?', reply_markup=back_markup())
+    await message.answer('Rasm?', reply_markup=back_markup())
 
 
 @dp.message_handler(IsAdmin(), content_types=ContentType.PHOTO, state=ProductState.image)
@@ -156,7 +156,7 @@ async def process_image_photo(message: Message, state: FSMContext):
         data['image'] = downloaded_file
 
     await ProductState.next()
-    await message.answer('Цена?', reply_markup=back_markup())
+    await message.answer('Narxi?', reply_markup=back_markup())
 
 
 @dp.message_handler(IsAdmin(), content_types=ContentType.TEXT, state=ProductState.image)
@@ -168,11 +168,11 @@ async def process_image_url(message: Message, state: FSMContext):
 
         async with state.proxy() as data:
 
-            await message.answer(f"Изменить описание с <b>{data['body']}</b>?", reply_markup=back_markup())
+            await message.answer(f"<b>{data['body']} bilan ta\'rifini o'zgartirish</b>?", reply_markup=back_markup())
 
     else:
 
-        await message.answer('Вам нужно прислать фото товара.')
+        await message.answer('Siz mahsulot rasmini yuborishingiz kerak.')
 
 
 @dp.message_handler(IsAdmin(), lambda message: not message.text.isdigit(), state=ProductState.price)
@@ -184,11 +184,11 @@ async def process_price_invalid(message: Message, state: FSMContext):
 
         async with state.proxy() as data:
 
-            await message.answer("Другое изображение?", reply_markup=back_markup())
+            await message.answer("Boshqa rasmmi?", reply_markup=back_markup())
 
     else:
 
-        await message.answer('Укажите цену в виде числа!')
+        await message.answer('Raqamni raqam sifatida ko\'rsating!')
 
 
 @dp.message_handler(IsAdmin(), lambda message: message.text.isdigit(), state=ProductState.price)
@@ -203,7 +203,7 @@ async def process_price(message: Message, state: FSMContext):
         price = data['price']
 
         await ProductState.next()
-        text = f'<b>{title}</b>\n\n{body}\n\nЦена: {price} рублей.'
+        text = f'<b>{title}</b>\n\n{body}\n\Narxi: {price} so\'m.'
 
         markup = check_markup()
 
@@ -214,7 +214,7 @@ async def process_price(message: Message, state: FSMContext):
 
 @dp.message_handler(IsAdmin(), lambda message: message.text not in [back_message, all_right_message], state=ProductState.confirm)
 async def process_confirm_invalid(message: Message, state: FSMContext):
-    await message.answer('Такого варианта не было.')
+    await message.answer('Bunday variyant bolmagan.')
 
 
 @dp.message_handler(IsAdmin(), text=back_message, state=ProductState.confirm)
@@ -224,7 +224,7 @@ async def process_confirm_back(message: Message, state: FSMContext):
 
     async with state.proxy() as data:
 
-        await message.answer(f"Изменить цену с <b>{data['price']}</b>?", reply_markup=back_markup())
+        await message.answer(f"<b>{data['price']} bilan narxini ozgartirish</b>?", reply_markup=back_markup())
 
 
 @dp.message_handler(IsAdmin(), text=all_right_message, state=ProductState.confirm)
@@ -246,7 +246,7 @@ async def process_confirm(message: Message, state: FSMContext):
                  (idx, title, body, image, int(price), tag))
 
     await state.finish()
-    await message.answer('Готово!', reply_markup=ReplyKeyboardRemove())
+    await message.answer('Tayyor!', reply_markup=ReplyKeyboardRemove())
     await process_settings(message)
 
 
@@ -258,7 +258,7 @@ async def delete_product_callback_handler(query: CallbackQuery, callback_data: d
 
     product_idx = callback_data['id']
     db.query('DELETE FROM products WHERE idx=?', (product_idx,))
-    await query.answer('Удалено!')
+    await query.answer('O\'chirildi!')
     await query.message.delete()
 
 
@@ -272,7 +272,7 @@ async def show_products(m, products, category_idx):
 
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton(
-            '🗑️ Удалить', callback_data=product_cb.new(id=idx, action='delete')))
+            '🗑️ O\'chirish', callback_data=product_cb.new(id=idx, action='delete')))
 
         await m.answer_photo(photo=image,
                              caption=text,
@@ -282,4 +282,4 @@ async def show_products(m, products, category_idx):
     markup.add(add_product)
     markup.add(delete_category)
 
-    await m.answer('Хотите что-нибудь добавить или удалить?', reply_markup=markup)
+    await m.answer('Birnima qoshish yoki o\'chirishni xoxlaysizmi?', reply_markup=markup)

@@ -50,7 +50,7 @@ async def process_cart(message: Message, state: FSMContext):
                     data['products'][idx] = [title, price, count_in_cart]
 
                 markup = product_markup(idx, count_in_cart)
-                text = f'<b>{title}</b>\n\n{body}\n\nЦена: {price}₽.'
+                text = f'<b>{title}</b>\n\n{body}\n\nБахоси: {price}Сум.'
 
                 await message.answer_photo(photo=image,
                                            caption=text,
@@ -82,7 +82,7 @@ async def product_callback_handler(query: CallbackQuery, callback_data: dict, st
 
             else:
 
-                await query.answer('Количество - ' + data['products'][idx][2])
+                await query.answer('Микдор - ' + data['products'][idx][2])
 
     else:
 
