@@ -203,7 +203,7 @@ async def process_price(message: Message, state: FSMContext):
         price = data['price']
 
         await ProductState.next()
-        text = f'<b>{title}</b>\n\n{body}\n\Narxi: {price} so\'m.'
+        text = f'<b>{title}</b>\n\n{body}\n\nNarxi: {price} so\'m.'
 
         markup = check_markup()
 
