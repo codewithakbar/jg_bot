@@ -304,9 +304,9 @@ async def process_confirm(message: Message, state: FSMContext):
             for i in ADMINS:
                 await bot.send_message(i, f'{check_admin}\n {"-"*70}\n\n{msg}', reply_markup=confirmation_keyboard)
 
-            await message.answer("Xaridingiz uchun raxmat 😎😎😎", reply_markup=catalog_markup())
+            await message.answer("Xaridingiz uchun raxmat 😎😎😎")
 
-            # await state.finish()
+            await state.finish()
 
     else:
 
@@ -332,8 +332,5 @@ async def cancel_post(call: CallbackQuery, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(text='🛍️ Каталог')
-async def b_post(call: CallbackQuery):
-    # await call.message.delete()
-    await call.message.answer('''<b>Келинг, совғангизни бирга танлаймиз\n✌️</b>''', reply_markup=catalog_markup())
+
 
