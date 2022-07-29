@@ -302,7 +302,7 @@ async def process_confirm(message: Message, state: FSMContext):
             for i in ADMINS:
                 await bot.send_message(i, f'{check_admin}\n {"-"*70}\n\n{msg}', reply_markup=confirmation_keyboard)
 
-        
+            await message.answer("/start 👈Bosing")
 
             # await state.finish()
 
