@@ -316,7 +316,7 @@ async def process_confirm(message: Message, state: FSMContext):
 
             @dp.callback_query_handler(text='cancel_a', state=CheckoutState.confirm)
             async def cancel_post(call: CallbackQuery, state: FSMContext):
-                await call.message.delete()
+                # await call.message.delete()
                 await call.message.answer("Bekor qilindi")
                 await state.finish()
 
