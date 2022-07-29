@@ -210,8 +210,12 @@ async def process_phone(message: Message, state: FSMContext):
         data['phone'] = message.text
 
     await CheckoutState.next()
-    await message.answer('Телефон оркали турар жойингизни локатсиясини ташанг.',
-                         reply_markup=geo())
+    msg = f"❗️❗️❗️ <b>Диккат киламиз!</b>\n\n"
+    msg += f"GPS('lokatsiya') йокилган холда\n\n"
+    msg += f"Телефон оркали турар жойингизни локатсиясини ташанг.\n\n"
+    msg += f'<b>Акс холда нотогри локатсия ташаб юборасиз!!!</b>'
+
+    await message.answer(msg, reply_markup=geo())
 
 
 @dp.message_handler(IsUser(), state=CheckoutState.location, content_types=['location'])
