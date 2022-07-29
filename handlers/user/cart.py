@@ -333,7 +333,7 @@ async def cancel_post(call: CallbackQuery, state: FSMContext):
     await state.finish()
 
 
-@dp.callback_query_handler(text='🛍️ Каталог')
+@dp.message_handler(text='🛍️ Каталог')
 async def back_post(call: CallbackQuery):
     # await call.message.delete()
     await call.message.answer('''<b>Келинг, совғангизни бирга танлаймиз\n✌️</b>''', reply_markup=categories_markup())
