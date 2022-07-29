@@ -13,6 +13,8 @@ from filters import IsUser
 from aiogram import types
 from .menu import cart
 from keyboards.inline.confirm import confirmation_keyboard
+from keyboards.inline.categories import categories_markup
+
 
 
 @dp.message_handler(IsUser(), text=cart)
@@ -302,7 +304,7 @@ async def process_confirm(message: Message, state: FSMContext):
             for i in ADMINS:
                 await bot.send_message(i, f'{check_admin}\n {"-"*70}\n\n{msg}', reply_markup=confirmation_keyboard)
 
-            await message.answer("/start 👈Bosing")
+            await message.answer("Xaridingiz uchun raxmat 😎😎😎", reply_markup=categories_markup())
 
             # await state.finish()
 
