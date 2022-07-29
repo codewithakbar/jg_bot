@@ -23,7 +23,7 @@ async def process_cart(message: Message, state: FSMContext):
 
     if len(cart_data) == 0:
 
-        await message.answer('Ваша корзина пуста.')
+        await message.answer('Sizning savatingiz bo\'sh')
 
     else:
 
