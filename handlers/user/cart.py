@@ -319,7 +319,7 @@ async def process_confirm(message: Message, state: FSMContext):
 # @dp.message_handler(text="confirm")
 
 
-@dp.callback_query_handler(text='confirm_a', state=CheckoutState.confirm)
+@dp.callback_query_handler(text='confirm_a')
 async def confirm_post(call: CallbackQuery):
     message = await call.message.edit_reply_markup()
     await message.send_copy(chat_id=CHANNELS[0])
@@ -327,7 +327,7 @@ async def confirm_post(call: CallbackQuery):
 # @dp.message_handler(text="cancel")
 
 
-@dp.callback_query_handler(text='cancel_a', state=CheckoutState.confirm)
+@dp.callback_query_handler(text='cancel_a')
 async def cancel_post(call: CallbackQuery):
     # await call.message.delete()
     await call.message.answer("Bekor qilindi")
