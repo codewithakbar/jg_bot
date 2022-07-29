@@ -306,19 +306,7 @@ async def process_confirm(message: Message, state: FSMContext):
 
             await message.answer("Xaridingiz uchun raxmat 😎😎😎")
 
-            @dp.callback_query_handler(text='confirm_a', state=CheckoutState.confirm)
-            async def confirm_post(call: CallbackQuery, state: FSMContext):
-                message = await call.message.edit_reply_markup()
-                await message.send_copy(chat_id=CHANNELS[0])
-                await state.finish()
-            # @dp.message_handler(text="cancel")
-
-
-            @dp.callback_query_handler(text='cancel_a', state=CheckoutState.confirm)
-            async def cancel_post(call: CallbackQuery, state: FSMContext):
-                # await call.message.delete()
-                await call.message.answer("Bekor qilindi")
-                await state.finish()
+            
 
             await state.finish()
 
@@ -331,19 +319,19 @@ async def process_confirm(message: Message, state: FSMContext):
 # @dp.message_handler(text="confirm")
 
 
-# @dp.callback_query_handler(text='confirm_a', state=CheckoutState.confirm)
-# async def confirm_post(call: CallbackQuery, state: FSMContext):
-#     message = await call.message.edit_reply_markup()
-#     await message.send_copy(chat_id=CHANNELS[0])
-#     await state.finish()
-# # @dp.message_handler(text="cancel")
+@dp.callback_query_handler(text='confirm_a', state=CheckoutState.confirm)
+async def confirm_post(call: CallbackQuery, state: FSMContext):
+    message = await call.message.edit_reply_markup()
+    await message.send_copy(chat_id=CHANNELS[0])
+    # await state.finish()
+# @dp.message_handler(text="cancel")
 
 
-# @dp.callback_query_handler(text='cancel_a', state=CheckoutState.confirm)
-# async def cancel_post(call: CallbackQuery, state: FSMContext):
-#     await call.message.delete()
-#     await call.message.answer("Bekor qilindi")
-#     await state.finish()
+@dp.callback_query_handler(text='cancel_a', state=CheckoutState.confirm)
+async def cancel_post(call: CallbackQuery, state: FSMContext):
+    # await call.message.delete()
+    await call.message.answer("Bekor qilindi")
+    # await state.finish()
 
 
 
