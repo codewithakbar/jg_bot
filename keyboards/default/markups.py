@@ -1,9 +1,15 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from handlers.user.menu import catalog
 
 back_message = '👈 Оркага'
 confirm_message = '✅ Буюртмани тастиклаш'
 all_right_message = '✅ Хаммаси тогри'
 cancel_message = '🚫 Бекор килиш'
+
+
+def catalog_markup():
+    markup = ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
+    markup.add(catalog)
 
 def confirm_markup():
     markup = ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
