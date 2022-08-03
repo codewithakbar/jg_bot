@@ -268,7 +268,7 @@ async def show_products(m, products, category_idx):
 
     for idx, title, body, image, price, tag in products:
 
-        text = f'<b>{title}</b>\n\n{body}\n\nЦена: {price} рублей.'
+        text = f'<b>{title}</b>\n\n{body}\n\nNarxi: {price} so\'m.'
 
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton(

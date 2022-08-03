@@ -9,16 +9,16 @@ balance = '💰 Баланс'
 cart = '🛒 Сават'
 delivery_status = '🚚 Буюртма холати'
 
-settings = '⚙️ Настройка каталога'
-orders = '🚚 Заказы'
-questions = '❓ Вопросы'
+settings = '⚙️ Katalog so\'zlamalari'
+orders = '🚚 Zaqazlar'
+questions = '❓ Savollar'
 
 
 @dp.message_handler(IsAdmin(), commands='menu')
 async def admin_menu(message: Message):
     markup = ReplyKeyboardMarkup(selective=True)
     markup.add(settings)
-    markup.add(questions, orders)
+    # markup.add(questions, orders)
 
     await message.answer('Меню', reply_markup=markup)
 
