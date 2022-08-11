@@ -179,7 +179,7 @@ async def process_name(message: Message, state: FSMContext):
         else:
 
             await CheckoutState.next()
-            await message.answer('Яшаш манзилингизни киритинг.',
+            await message.answer('Яшаш манзилингизни толик киритинг.( шахар, туман, кишлок, махала, коча, уй сони. )',
                                  reply_markup=back_markup())
 
 
