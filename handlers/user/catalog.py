@@ -36,6 +36,8 @@ async def add_product_callback_handler(query: CallbackQuery, callback_data: dict
 
     await query.answer('Махсулот саватка кошилди!')
     await query.message.delete()
+    await bot.send_message(chat_id=query.message.chat.id, text='🛒 Махсулот саватка кошилди!')
+
 
 
 async def show_products(m, products):

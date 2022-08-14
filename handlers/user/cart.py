@@ -1,3 +1,4 @@
+from keyboards.inline.categories import categories_markup
 import logging
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
@@ -11,7 +12,7 @@ from states import CheckoutState
 from loader import dp, db, bot
 from filters import IsUser
 from aiogram import types
-from .menu import cart
+from .menu import cart, catalog
 from keyboards.inline.confirm import confirmation_keyboard
 
 
@@ -154,7 +155,8 @@ async def process_check_cart_back(message: Message, state: FSMContext):
 @dp.message_handler(IsUser(), text=all_right_message, state=CheckoutState.check_cart)
 async def process_check_cart_all_right(message: Message, state: FSMContext):
     await CheckoutState.next()
-    await message.answer('Исмингизни киритинг.',
+    await message.answer('ЖАЙХУН ГУЛШАНИГА БУЮРТМА БЕРИШ УЧУН САВОЛЛАРГА ЖАВОБ БЕРИНГ...❓❓❓❓❓')
+    await message.answer('<b>🫶 Исмингизни киритинг.</b>',
                          reply_markup=back_markup())
 
 
@@ -179,8 +181,21 @@ async def process_name(message: Message, state: FSMContext):
         else:
 
             await CheckoutState.next()
-            await message.answer('Яшаш манзилингизни толик киритинг.( шахар, туман, кишлок, махала, коча, уй сони. )',
+            # await message.answer('Яшаш манзилингизни толик киритинг.( шахар, туман, кишлок, махала, коча, уй сони. )',
+            #                      reply_markup=back_markup())
+            await message.answer('<b>🎂 ТУҒИЛГAН КУН ҚAЧОН?</b>',
                                  reply_markup=back_markup())
+
+
+@dp.message_handler(IsUser(), state=CheckoutState.when_bday)
+async def process_when_bday(message: Message, state: FSMContext):
+
+    async with state.proxy() as data:
+        data['when_bday'] = message.text
+
+    await CheckoutState.next()
+    await message.answer('ТУҒИЛГAН КУН ЕГAСИНИНГ МAНЗИЛИ ҚAЙЕРДA?\n\nЯшаш манзилингизни толик киритинг.( шахар, туман, кишлок, махала, коча, уй сони. )',
+                         reply_markup=back_markup())
 
 
 @dp.message_handler(IsUser(), text=back_message, state=CheckoutState.address)
@@ -201,9 +216,21 @@ async def process_address(message: Message, state: FSMContext):
         data['address'] = message.text
 
     await CheckoutState.next()
-    await message.answer('Телефон рақамингизни киритинг.',
-                         reply_markup=back_markup())
+    # await message.answer('Телефон рақамингизни киритинг.',
+    #                      reply_markup=back_markup())
+    await message.answer('<b>💳 ТЎЛОВ ТУРИ \ ПЛAСТИК ЙОКИ НAҚТ</b>')
 
+
+@dp.message_handler(IsUser(), state=CheckoutState.cash_or_online)
+async def process_cash_or_online(message: Message, state: FSMContext):
+
+    async with state.proxy() as data:
+        data['cash_or_online'] = message.text
+
+    await CheckoutState.next()
+    # await message.answer('Телефон рақамингизни киритинг.',
+    #                      reply_markup=back_markup())
+    await message.answer('<b>📞 Телефон рақамингизни киритинг.</b>')
 
 @dp.message_handler(IsUser(), state=CheckoutState.phone)
 async def process_phone(message: Message, state: FSMContext):
@@ -237,8 +264,9 @@ async def process_locate(message: types.Message, state: FSMContext):
         data['location'] = ("https://www.google.com/search?q=%s+%s" %
                             (message.location.latitude, message.location.longitude))
 
-    await confirm(message)
+    # await confirm(message)
     await CheckoutState.next()
+    await message.answer('<b>🕔 СОAТ НЕЧAГA БОРИШ КЕРAК?</b>')
 
     # else:
 
@@ -246,9 +274,51 @@ async def process_locate(message: types.Message, state: FSMContext):
     #     await CheckoutState.next()
 
 
+@dp.message_handler(IsUser(), state=CheckoutState.when_to_go)
+async def process_when_to_go(message: Message, state: FSMContext):
+
+    async with state.proxy() as data:
+        data['when_to_go'] = message.text
+
+    await CheckoutState.next()
+
+    await message.answer('<b>👤 ТУҒИЛГAН КУН ЭГAСИНИНГ ИСМИ?</b>')
+
+
+@dp.message_handler(IsUser(), state=CheckoutState.name_person_bday)
+async def process_name_person_bday(message: Message, state: FSMContext):
+
+    async with state.proxy() as data:
+        data['name_person_bday'] = message.text
+
+    await CheckoutState.next()
+
+    await message.answer('<b>🎁 КИМНИНГ НОМИДAН ТAБРИКЛAЙМИЗ?</b>')
+
+
+@dp.message_handler(IsUser(), state=CheckoutState.kimning_nomidan)
+async def process_kimning_nomidan(message: Message, state: FSMContext):
+
+    async with state.proxy() as data:
+        data['kimning_nomidan'] = message.text
+
+    await CheckoutState.next()
+    await message.answer('<b>☎️ БИЗНИ КУТИБ ОЛAДИГAН ИНСОННИНГ ТЕЛЕФОН РAҚAМИ ?</b>')
+    
+
+@dp.message_handler(IsUser(), state=CheckoutState.bizni_kutibol)
+async def process_bizni_kutibol(message: Message, state: FSMContext):
+
+    async with state.proxy() as data:
+        data['bizni_kutibol'] = message.text
+
+    await CheckoutState.next()
+    await confirm(message)
+
+
 async def confirm(message):
 
-    await message.answer('Ҳаммаси тўғри эканлигига ишонч ҳосил қилинг ва буюртмани тасдиқланг.',
+    await message.answer('<b>Ҳаммаси тўғри эканлигига ишонч ҳосил қилинг ва буюртмани тасдиқланг.</b>',
                          reply_markup=confirm_markup())
 
 
@@ -273,6 +343,9 @@ async def process_confirm(message: Message, state: FSMContext):
     enough_money = True  # enough money on the balance sheet
     markup = ReplyKeyboardRemove()
     markup_back = back_to_menu()
+    markup_new = ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
+
+    markup_new.add(catalog, cart)
 
     if enough_money:
 
@@ -285,8 +358,9 @@ async def process_confirm(message: Message, state: FSMContext):
                         for idx, quantity in db.fetchall('''SELECT idx, quantity FROM cart
             WHERE cid=?''', (cid,))]  # idx=quantity
 
-            db.query('INSERT INTO orders VALUES (?, ?, ?, ?, ?, ?)',
-                     (cid, data['name'], data['address'], data['phone'], data['location'], ' '.join(products)))
+            db.query('INSERT INTO orders VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                     (cid, data['name'], data['when_bday'], data['address'], data['cash_or_online'],
+                      data['phone'], data['location'], data['when_to_go'], data['name_person_bday'], data['kimning_nomidan'], data['bizni_kutibol'], ' '.join(products)))
 
             db.query('DELETE FROM cart WHERE cid=?', (cid,))
 
@@ -297,18 +371,23 @@ async def process_confirm(message: Message, state: FSMContext):
             username = message.from_user.username
 
             msg = f"❗️❗️❗️ <b>Sizning buyurmangiz: @{username}</b>\n\n"
-            msg += f"Ism: {data['name']}\n"
-            msg += f"Telefon raqam: {data['phone']}\n"
-            msg += f"Adres: {data['address']}\n"
-            msg += f"GEO-Manzil: {data['location']}\n"
+            msg += f"<i>Ism:</i> <b>{data['name']}</b>\n\n"
+            msg += f"<i>Telefon raqam:</i> <b>{data['phone']}</b>\n\n"
+            msg += f"<i>ТУҒИЛГAН КУН ЕГAСИНИНГ МAНЗИЛИ ҚAЙЕРДA?:</i> <b>{data['address']}</b>\n\n"
+            msg += f"<i>ТЎЛОВ ТУРИ \ ПЛAСТИК ЙОКИ НAҚТ:</i> <b>{data['cash_or_online']}</b>\n\n"
+            msg += f"<i>СОAТ НЕЧAГA БОРИШ КЕРAК?:</i> <b>{data['when_to_go']}</b>\n\n"
+            msg += f"<i>ТУҒИЛГAН КУН ЭГAСИНИНГ ИСМИ?:</i> <b>{data['name_person_bday']}</b>\n\n"
+            msg += f"<i>КИМНИНГ НОМИДAН ТAБРИКЛAЙМИЗ?:</i> <b>{data['kimning_nomidan']}</b>\n\n"
+            msg += f"<i>БИЗНИ КУТИБ ОЛAДИГAН ИНСОННИНГ ТЕЛЕФОН РAҚAМИ ?:</i> <b>{data['bizni_kutibol']}</b>\n\n"
+            msg += f"<i>GEO-Manzil:</i> <b>{data['location']}</b>\n\n"
 
             await message.answer(f'{check_admin}\n {"-"*70}\n\n{msg}', reply_markup=markup)
 
             for i in ADMINS:
                 await bot.send_message(i, f'{check_admin}\n {"-"*70}\n\n{msg}', reply_markup=confirmation_keyboard)
-
-            await message.answer("Xaridingiz uchun raxmat 😎😎😎")
-
+            
+            await message.answer("Xaridingiz uchun raxmat 😎😎😎", reply_markup=markup_new)
+            await message.answer("<b>Келинг, совғангизни бирга танлаймиз\n✌️</b>",reply_markup=categories_markup())
             
 
             await state.finish()
