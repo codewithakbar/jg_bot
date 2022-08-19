@@ -37,3 +37,13 @@ async def user_menu(message: Message):
 async def back_post(call: CallbackQuery):
     await call.message.delete()
     await call.message.answer('''<b>Келинг, совғангизни бирга танлаймиз\n✌️</b>''', reply_markup=categories_markup())
+
+
+@dp.message_handler(text='🔙 Orqaga')
+async def back_cart(message: Message):
+    markup_new = ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
+
+    markup_new.add(catalog, cart)
+
+    await message.answer("OK", reply_markup=markup_new)
+    await message.answer('''<b>Келинг, совғангизни бирга танлаймиз\n✌️</b>''', reply_markup=categories_markup())

@@ -41,7 +41,54 @@ class DatabaseManager(object):
     def __del__(self):
         self.conn.close()
 
+    def execute(self, sql: str, parameters: tuple = None, fetchone=False, fetchall=False, commit=False):
+        if not parameters:
+            parameters = ()
+        conn = self.conn
+        conn.set_trace_callback(logger)
+        cursor = conn.cursor()
+        data = None
+        cursor.execute(sql, parameters)
 
+        
+        if fetchall:
+            data = cursor.fetchall()
+        if fetchone:
+            data = cursor.fetchone()
+        return data
+
+    def add_user(self, id: int, name: str):
+        # SQL_EXAMPLE = "INSERT INTO Users(id, Name, email) VALUES(1, 'John', 'John@gmail.com')"
+
+        sql = """
+        INSERT INTO Users(id, Name) VALUES(?, ?)
+        """
+        self.execute(sql, parameters=(id, name), commit=True)
+
+    def select_all_users(self):
+        sql = """
+        SELECT * FROM Users
+        """
+        return self.execute(sql, fetchall=True)
+
+
+    def id_users(self):
+        sql = """
+        SELECT id FROM Users
+        """
+        return self.execute(sql, fetchall=True)
+
+    def count_users(self):
+        return self.execute("SELECT COUNT(*) FROM Users;", fetchone=True)
+
+
+def logger(statement):
+    print(f"""
+_____________________________________________________
+Executing:
+{statement}
+_____________________________________________________
+    """)
 # '''
 
 # products: idx text, title text, body text, photo blob, price int, tag text
