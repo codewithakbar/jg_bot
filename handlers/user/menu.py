@@ -20,7 +20,7 @@ async def admin_menu(message: Message):
     markup.add(settings)
     # markup.add(questions, orders)
 
-    await message.answer('Меню', reply_markup=markup)
+    await message.answer('Меню Foydalanuvchi rejimiga qaytish uchun user deb yozing', reply_markup=markup)
 
 
 @dp.message_handler(IsUser(), commands='menu')

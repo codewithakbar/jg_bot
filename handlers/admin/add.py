@@ -16,6 +16,7 @@ product_cb = CallbackData('product', 'id', 'action')
 
 add_product = '➕ Махсулот кошиш'
 delete_category = '🗑️ Категория Учириш'
+back_to_menu = "Orqaga"
 
 
 @dp.message_handler(IsAdmin(), text=settings)
@@ -281,5 +282,11 @@ async def show_products(m, products, category_idx):
     markup = ReplyKeyboardMarkup()
     markup.add(add_product)
     markup.add(delete_category)
+    markup.add(back_to_menu)
 
     await m.answer('Birnima qoshish yoki o\'chirishni xoxlaysizmi?', reply_markup=markup)
+
+
+@dp.message_handler(text=back_to_menu)
+async def back_ToMenu(message: Message):
+    await message.answer("/menu orqaga qaytish uchun shunga bosing")
